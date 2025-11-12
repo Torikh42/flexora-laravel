@@ -8,7 +8,7 @@
             <div class="relative max-w-xl text-white z-10">
                 <h1 class="text-4xl md:text-5xl font-bold mb-4 leading-tight">Empowering Women Through Movement: Pilates, Pole Dance, and Yoga Classes</h1>
                 <p class="text-lg">
-                    Let’s get one thing clear: olahraga bukan hanya tentang tubuh, tapi juga tentang rasa percaya diri. 
+                    Let's get one thing clear: olahraga bukan hanya tentang tubuh, tapi juga tentang rasa percaya diri. 
                     Di Flexora, kami menghadirkan ruang aman bagi wanita untuk berlatih Pilates, Pole Dance, dan Yoga 
                     dengan pilihan kelas Reguler, Hijab, dan Private. Tersedia juga kelas berhijab agar setiap wanita merasa nyaman. 
                     Temukan kenyamananmu, pilih gaya yang sesuai, dan rasakan transformasi dari dalam maupun luar.

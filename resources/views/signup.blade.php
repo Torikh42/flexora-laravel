@@ -94,7 +94,6 @@
                     alert('✅ Registration successful! Please log in.');
                     window.location.href = "{{ url('/login') }}";
                 } else {
-                    // Handle errors returned by the server
                     let errorMessage = 'Registration failed. Please try again.';
                     if (data.errors) {
                         errorMessage = Object.values(data.errors).flat().join('\n');

@@ -10,7 +10,6 @@
             <a href="#" class="text-gray-700 hover:text-amber-800 font-medium transition-colors">Contact</a>
         </nav>
         <div id="authSection" class="flex items-center space-x-4">
-            <!-- This will be populated by script -->
         </div>
     </div>
 </header>
@@ -58,12 +57,10 @@
             `;
 
             document.getElementById("logoutBtn").addEventListener("click", async () => {
-              // No need to await logout, just clear token and redirect
               localStorage.removeItem('auth_token');
               window.location.href = '/';
             });
           } else {
-            // This case might happen if the token is valid but the user is not found
             console.error('Token was valid, but no user was returned.');
             renderLoggedOut();
           }

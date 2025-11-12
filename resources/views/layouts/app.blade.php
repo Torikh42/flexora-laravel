@@ -6,14 +6,12 @@
 
         <title>Flexora</title>
 
-        <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100">
             @include('components.navbar')
 
-            <!-- Page Content -->
             <main>
                 @yield('content')
             </main>
