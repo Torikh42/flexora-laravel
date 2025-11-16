@@ -1,12 +1,12 @@
 <header class="bg-white/95 shadow-md sticky top-0 z-50">
     <div class="container mx-auto flex justify-between items-center p-4 px-6">
         <div class="text-2xl font-bold text-stone-700">
-            <a href="{{ url('/') }}">Flexora</a>
+            <a href="{{ route('home') }}">Flexora</a>
         </div>
         <nav class="hidden md:flex space-x-8">
-            <a href="{{ url('/') }}" class="text-gray-700 hover:text-amber-800 font-medium transition-colors">Home</a>
-            <a href="#" class="text-gray-700 hover:text-amber-800 font-medium transition-colors">Classes</a>
-            <a href="#" class="text-gray-700 hover:text-amber-800 font-medium transition-colors">Membership</a>
+            <a href="{{ route('home') }}" class="text-gray-700 hover:text-amber-800 font-medium transition-colors">Home</a>
+            <a href="{{ route('classes.index') }}" class="text-gray-700 hover:text-amber-800 font-medium transition-colors">Classes</a>
+            <a href="{{ route('memberships.index') }}" class="text-gray-700 hover:text-amber-800 font-medium transition-colors">Membership</a>
             <a href="#" class="text-gray-700 hover:text-amber-800 font-medium transition-colors">Contact</a>
         </nav>
         <div id="authSection" class="flex items-center space-x-4">
@@ -24,8 +24,8 @@
       const renderLoggedOut = () => {
         console.log('Rendering logged out state.');
         authSection.innerHTML = `
-          <a href="{{ url('/login') }}" class="text-gray-700 hover:text-amber-800 font-medium transition-colors">Log in</a>
-          <a href="{{ url('/signup') }}" class="px-4 py-2 bg-stone-700 text-white rounded-lg hover:bg-stone-800 transition-colors">Sign Up</a>
+          <a href="{{ route('login') }}" class="text-gray-700 hover:text-amber-800 font-medium transition-colors">Log in</a>
+          <a href="{{ route('signup') }}" class="px-4 py-2 bg-stone-700 text-white rounded-lg hover:bg-stone-800 transition-colors">Sign Up</a>
         `;
       };
 

@@ -66,4 +66,24 @@ class User extends Authenticatable implements JWTSubject
             'password' => 'hashed',
         ];
     }
+
+    public function userMemberships()
+    {
+        return $this->hasMany(UserMembership::class);
+    }
+
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class);
+    }
+
+    public function schedules()
+    {
+        return $this->belongsToMany(Schedule::class, 'enrollments');
+    }
+
+    public function hasActiveMembership()
+    {
+        return $this->userMemberships()->where('end_date', '>=', now())->exists();
+    }
 }

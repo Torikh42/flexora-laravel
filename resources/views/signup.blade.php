@@ -6,53 +6,61 @@
     <title>Flexora Sign Up</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-cover bg-center h-screen flex flex-col items-center justify-center py-12" style="background-image: url('{{ asset('images/loginbg.jpeg') }}');">
+<body class="bg-cover bg-center min-h-screen flex flex-col items-center justify-center py-12 px-4" 
+      style="background-image: url('{{ asset('images/loginbg.jpeg') }}');">
 
-    <div class="bg-white/80 backdrop-blur-sm p-8 rounded-xl shadow-2xl w-full max-w-sm text-center">
-        <h2 class="text-xl font-bold mb-4">Create Your Account</h2>
+    <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-sm text-center">
+        <h2 class="text-3xl font-bold mb-6 text-gray-900">Create Account</h2>
 
         <form id="signupForm">
-            <div class="mb-3 text-left">
-                <label for="name" class="block mb-1 font-bold text-xs">Name</label>
+            <div class="mb-4 text-left">
+                <label for="name" class="block mb-2 font-medium text-sm text-gray-700">Name</label>
                 <input type="text" id="name" name="name" placeholder="Enter your name" required
-                       class="w-full px-3 py-2 rounded-full border-none outline-none text-xs">
-            </div>
-
-            <div class="mb-3 text-left">
-                <label for="email" class="block mb-1 font-bold text-xs">Email</label>
-                <input type="email" id="email" name="email" placeholder="Enter your email" required
-                       class="w-full px-3 py-2 rounded-full border-none outline-none text-xs">
-            </div>
-
-            <div class="mb-3 text-left">
-                <label for="password" class="block mb-1 font-bold text-xs">Password</label>
-                <input type="password" id="password" name="password" placeholder="Enter your password" required
-                       class="w-full px-3 py-2 rounded-full border-none outline-none text-xs">
+                       class="w-full px-4 py-2.5 rounded-lg border border-gray-300 text-sm 
+                              focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
 
             <div class="mb-4 text-left">
-                <label for="password_confirmation" class="block mb-1 font-bold text-xs">Confirm Password</label>
-                <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Re-enter your password" required
-                       class="w-full px-3 py-2 rounded-full border-none outline-none text-xs">
+                <label for="email" class="block mb-2 font-medium text-sm text-gray-700">Email</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required
+                       class="w-full px-4 py-2.5 rounded-lg border border-gray-300 text-sm 
+                              focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
 
-            <button type="submit" class="w-full bg-amber-300 text-black py-2 rounded-full font-bold text-sm cursor-pointer transition-transform transform hover:scale-105 shadow-lg">
+            <div class="mb-4 text-left">
+                <label for="password" class="block mb-2 font-medium text-sm text-gray-700">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required
+                       class="w-full px-4 py-2.5 rounded-lg border border-gray-300 text-sm 
+                              focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+
+            <div class="mb-6 text-left">
+                <label for="password_confirmation" class="block mb-2 font-medium text-sm text-gray-700">Confirm Password</label>
+                <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Re-enter your password" required
+                       class="w-full px-4 py-2.5 rounded-lg border border-gray-300 text-sm 
+                              focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+
+            <button type="submit" 
+                    class="w-full bg-gray-900 text-white py-3 rounded-lg font-bold text-sm cursor-pointer 
+                           transition-colors hover:bg-gray-700 shadow-lg">
                 Sign Up
             </button>
 
-            <div class="mt-3 text-xs">
-                Already have an account? <a href="{{ url('/login') }}" class="text-blue-600 hover:text-blue-800 hover:underline">Login</a>
+            <div class="mt-6 text-sm">
+                <span class="text-gray-600">Already have an account?</span>
+                <a href="{{ url('/login') }}" class="text-blue-600 hover:underline">Login</a>
             </div>
 
-            <div class="mt-3">
-                <a href="{{ url('/') }}" class="inline-block bg-pink-500 text-white px-4 py-2 rounded-full text-xs no-underline transition-colors hover:bg-pink-700">
-                    ⬅ Back to Home
+            <div class="mt-6 border-t pt-6">
+                <a href="{{ url('/') }}" class="text-sm text-gray-500 hover:underline">
+                    &larr; Back to Home
                 </a>
             </div>
         </form>
     </div>
 
-    <footer class="bg-pink-500 text-white text-center p-3 mt-5 w-full fixed bottom-0 left-0">
+    <footer class="text-center text-sm text-white/70 mt-8 mb-4">
         &copy; 2025 Flexora Studio
     </footer>
 
@@ -110,4 +118,3 @@
     </script>
 </body>
 </html>
-
