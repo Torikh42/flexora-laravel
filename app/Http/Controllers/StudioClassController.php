@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\StudioClass;
 use Illuminate\Http\Request;
 
+use App\Models\Membership;
+
 class StudioClassController extends Controller
 {
     /**
@@ -12,8 +14,12 @@ class StudioClassController extends Controller
      */
     public function index()
     {
-        $classes = StudioClass::all();
-        return view('class', ['classes' => $classes]);
+        $studio_classes = StudioClass::with('schedules')->get();
+        $memberships = Membership::all();
+        return view('studio_class', [
+            'studio_classes' => $studio_classes,
+            'memberships' => $memberships,
+        ]);
     }
 
     /**

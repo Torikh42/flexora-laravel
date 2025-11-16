@@ -9,7 +9,7 @@ class StudioClass extends Model
 {
     use HasFactory;
 
-    protected $table = 'classes';
+    protected $table = 'studio_classes';
 
     protected $fillable = [
         'name',
@@ -20,6 +20,11 @@ class StudioClass extends Model
 
     public function schedules()
     {
-        return $this->hasMany(Schedule::class, 'class_id');
+        return $this->hasMany(Schedule::class, 'studio_class_id');
+    }
+
+    public function memberships()
+    {
+        return $this->belongsToMany(Membership::class, 'membership_studio_class');
     }
 }

@@ -10,15 +10,16 @@ class Schedule extends Model
     use HasFactory;
 
     protected $fillable = [
-        'class_id',
-        'coach_name',
+        'studio_class_id',
+        'instructor',
         'start_time',
         'end_time',
+        'price',
     ];
 
     public function studioClass()
     {
-        return $this->belongsTo(StudioClass::class, 'class_id');
+        return $this->belongsTo(StudioClass::class, 'studio_class_id');
     }
 
     public function users()

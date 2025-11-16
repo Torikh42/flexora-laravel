@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('schedules', function (Blueprint $table) {
+        Schema::create('studio_classes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('studio_class_id')->constrained('studio_classes')->onDelete('cascade');
-            $table->string('instructor');
-            $table->dateTime('start_time');
-            $table->dateTime('end_time');
-            $table->decimal('price', 8, 2);
+            $table->string('name');
+            $table->string('slug')->unique();
+            $table->text('description');
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('schedules');
+        Schema::dropIfExists('studio_classes');
     }
 };

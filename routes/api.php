@@ -21,3 +21,12 @@ Route::group([
         Route::get('user-profile', [AuthController::class, 'userProfile']);
     });
 });
+
+// Enrollments and membership purchase API
+use App\Http\Controllers\EnrollmentController;
+use App\Http\Controllers\MembershipController;
+
+Route::middleware('auth:api')->group(function () {
+    Route::post('enrollments', [EnrollmentController::class, 'store']);
+    Route::post('memberships/{id}/purchase', [MembershipController::class, 'purchaseApi']);
+});

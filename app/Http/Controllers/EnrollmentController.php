@@ -27,7 +27,32 @@ class EnrollmentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $user = auth('api')->user() ?? auth()->user();
+        if (! $user) {
+            return response()->json(['message' => 'Unauthenticated'], 401);
+        }
+
+        $request->validate([
+            'schedule_id' => 'required|integer|exists:schedules,id',
+        ]);
+
+        $scheduleId = $request->input('schedule_id');
+
+        $exists = \App\Models\Enrollment::where('user_id', $user->id)
+            ->where('schedule_id', $scheduleId)
+            ->exists();
+
+        if ($exists) {
+            return response()->json(['message' => 'Already enrolled'], 409);
+        }
+
+        $enrollment = \App\Models\Enrollment::create([
+            'user_id' => $user->id,
+            'schedule_id' => $scheduleId,
+            'status' => 'confirmed',
+        ]);
+
+        return response()->json(['message' => 'Enrolled successfully', 'enrollment' => $enrollment], 201);
     }
 
     /**

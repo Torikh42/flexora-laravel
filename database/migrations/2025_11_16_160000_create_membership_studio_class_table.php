@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('classes', function (Blueprint $table) {
+        Schema::create('membership_studio_class', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('slug')->unique();
-            $table->text('description');
-            $table->string('image')->nullable();
+            $table->foreignId('membership_id')->constrained('memberships')->onDelete('cascade');
+            $table->foreignId('studio_class_id')->constrained('studio_classes')->onDelete('cascade');
             $table->timestamps();
+
+            $table->unique(['membership_id', 'studio_class_id']);
         });
     }
 
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('classes');
+        Schema::dropIfExists('membership_studio_class');
     }
 };

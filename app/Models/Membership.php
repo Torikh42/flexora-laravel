@@ -16,8 +16,13 @@ class Membership extends Model
         'description',
     ];
 
-    public function userMemberships()
+    public function users()
     {
-        return $this->hasMany(UserMembership::class);
+        return $this->belongsToMany(User::class, 'user_memberships');
+    }
+
+    public function studioClasses()
+    {
+        return $this->belongsToMany(StudioClass::class, 'membership_studio_class');
     }
 }
