@@ -16,6 +16,11 @@ class UserMembership extends Model
         'end_date',
     ];
 
+    protected $casts = [
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);

@@ -87,7 +87,10 @@ class AuthController extends Controller
      */
     public function userProfile()
     {
-        return response()->json(Auth::user());
+        $user = Auth::user();
+        // Load relationships
+        $user->load('userMemberships', 'enrollments');
+        return response()->json($user);
     }
 
     /**

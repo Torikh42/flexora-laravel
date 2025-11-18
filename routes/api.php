@@ -25,6 +25,9 @@ Route::group([
 // Enrollments and membership purchase API
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\MembershipController;
+use App\Http\Controllers\StudioClassController;
+
+Route::get('classes/available-by-date', [StudioClassController::class, 'availableByDate']);
 
 Route::middleware('auth:api')->group(function () {
     Route::post('enrollments', [EnrollmentController::class, 'store']);

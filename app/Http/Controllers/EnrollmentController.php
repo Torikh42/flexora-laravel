@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class EnrollmentController extends Controller
 {
@@ -37,22 +38,69 @@ class EnrollmentController extends Controller
         ]);
 
         $scheduleId = $request->input('schedule_id');
+        $schedule = \App\Models\Schedule::findOrFail($scheduleId);
 
+        // Check if user is already enrolled (any status)
         $exists = \App\Models\Enrollment::where('user_id', $user->id)
             ->where('schedule_id', $scheduleId)
-            ->exists();
+            ->first();
 
         if ($exists) {
-            return response()->json(['message' => 'Already enrolled'], 409);
+            // If already has pending or confirmed enrollment, reject
+            if ($exists->status === 'confirmed') {
+                return response()->json(['message' => 'Anda sudah terdaftar di kelas ini'], 409);
+            } elseif ($exists->status === 'pending') {
+                return response()->json(['message' => 'Enrollment sedang dalam proses pembayaran'], 409);
+            }
         }
 
-        $enrollment = \App\Models\Enrollment::create([
-            'user_id' => $user->id,
-            'schedule_id' => $scheduleId,
-            'status' => 'confirmed',
-        ]);
+        // Check if user has active membership
+        $activeMembership = $user->userMemberships()
+            ->where('end_date', '>=', now())
+            ->first();
 
-        return response()->json(['message' => 'Enrolled successfully', 'enrollment' => $enrollment], 201);
+        if ($activeMembership) {
+            // User has active membership - validate schedule date is within membership period
+            $scheduleDate = Carbon::parse($schedule->start_time)->toDateString();
+            $membershipStart = $activeMembership->start_date;
+            $membershipEnd = $activeMembership->end_date;
+
+            if ($scheduleDate < $membershipStart || $scheduleDate > $membershipEnd) {
+                return response()->json([
+                    'message' => 'Class is outside your membership period',
+                    'membership_end_date' => $membershipEnd
+                ], 409);
+            }
+
+            // Create enrollment as free (via membership)
+            $enrollment = \App\Models\Enrollment::create([
+                'user_id' => $user->id,
+                'schedule_id' => $scheduleId,
+                'status' => 'confirmed',
+                'enrollment_type' => 'free_membership',
+            ]);
+
+            return response()->json([
+                'message' => 'Enrolled successfully via membership',
+                'enrollment' => $enrollment,
+                'enrollment_type' => 'free_membership'
+            ], 201);
+        } else {
+            // User doesn't have active membership - create enrollment with pending status
+            // Status will be updated to confirmed after payment
+            $enrollment = \App\Models\Enrollment::create([
+                'user_id' => $user->id,
+                'schedule_id' => $scheduleId,
+                'status' => 'pending',
+                'enrollment_type' => 'paid',
+            ]);
+
+            return response()->json([
+                'message' => 'Payment required',
+                'enrollment' => $enrollment,
+                'enrollment_type' => 'paid'
+            ], 402);
+        }
     }
 
     /**

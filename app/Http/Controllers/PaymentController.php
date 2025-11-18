@@ -43,13 +43,21 @@ class PaymentController extends Controller
 
         $schedule = Schedule::with('studioClass')->findOrFail($scheduleId);
 
-        // Verify that user has enrolled for this schedule
+        // Verify that user has an enrollment for this schedule (pending or confirmed)
         $enrollment = Enrollment::where('user_id', $user->id)
             ->where('schedule_id', $scheduleId)
+            ->whereIn('status', ['pending', 'confirmed'])
+            ->latest()
             ->first();
 
         if (!$enrollment) {
-            abort(403, 'Anda belum mendaftar untuk kelas ini.');
+            // If no enrollment found, create it as pending
+            $enrollment = Enrollment::create([
+                'user_id' => $user->id,
+                'schedule_id' => $scheduleId,
+                'status' => 'pending',
+                'enrollment_type' => 'paid',
+            ]);
         }
 
         return view('invoice_kelas', [

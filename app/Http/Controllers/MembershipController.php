@@ -48,6 +48,18 @@ class MembershipController extends Controller
             return response()->json(['message' => 'Unauthenticated'], 401);
         }
 
+        // Check if user already has an active membership
+        $activeMembership = $user->userMemberships()
+            ->where('end_date', '>=', Carbon::today())
+            ->first();
+        
+        if ($activeMembership) {
+            return response()->json([
+                'message' => 'Anda sudah memiliki membership yang aktif hingga ' . $activeMembership->end_date->format('d-m-Y') . '. Silakan tunggu hingga berakhir untuk membeli membership baru.',
+                'active_membership' => $activeMembership
+            ], 422);
+        }
+
         $membership = Membership::findOrFail($id);
 
         $start = Carbon::today();

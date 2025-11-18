@@ -13,6 +13,7 @@ class Enrollment extends Model
         'user_id',
         'schedule_id',
         'status',
+        'enrollment_type',
     ];
 
     public function user()

@@ -23,6 +23,24 @@ class StudioClassController extends Controller
     }
 
     /**
+     * API: Get available schedules for a specific date
+     */
+    public function availableByDate(Request $request)
+    {
+        $request->validate([
+            'date' => 'required|date_format:Y-m-d'
+        ]);
+
+        $date = $request->query('date');
+        
+        $schedules = \App\Models\Schedule::whereDate('start_time', $date)
+            ->with('studioClass')
+            ->get();
+
+        return response()->json(['schedules' => $schedules], 200);
+    }
+
+    /**
      * Show the form for creating a new resource.
      */
     public function create()
