@@ -3,7 +3,7 @@
 @section('title', 'Dashboard - Flexora')
 
 <div class="pt-5 px-4 md:px-8">
-  <div class="bg-gradient-to-b from-gray-300 to-gray-200 rounded-[30px] p-6 md:p-8 shadow-lg min-h-[500px] my-5">
+  <div class="bg-linear-to-b from-gray-300 to-gray-200 rounded-[30px] p-6 md:p-8 shadow-lg min-h-[500px] my-5">
     
     <!-- Loading State -->
     <div id="loadingState" class="text-center py-10">
@@ -18,7 +18,7 @@
     </div>
 
     <!-- Filter Section -->
-    <div id="filterSection" class="hidden flex flex-col md:flex-row justify-between items-stretch md:items-center mb-8 gap-5">
+    <div id="filterSection" class="flex flex-col md:flex-row justify-between items-stretch md:items-center mb-8 gap-5">
       <div class="flex flex-wrap gap-2">
         <button class="filter-btn px-6 py-2.5 rounded-full bg-white hover:bg-gray-100 transition-all duration-300 text-sm font-medium border-none cursor-pointer" data-filter="all" onclick="filterEnrollments('all')">
           Semua (<span id="totalCount">0</span>)
@@ -56,7 +56,7 @@
     </div>
 
     <!-- Class Grid -->
-    <div id="classGrid" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mb-10"></div>
+    <div id="classGrid" class="hidden grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mb-10"></div>
   </div>
 </div>
 
