@@ -6,7 +6,8 @@
         <nav class="hidden md:flex space-x-8">
             <a href="{{ route('home') }}" class="text-gray-700 hover:text-amber-800 font-medium transition-colors">Home</a>
             <a href="{{ route('studio_classes.index') }}" class="text-gray-700 hover:text-amber-800 font-medium transition-colors">Classes</a>
-            <a href="#" class="text-gray-700 hover:text-amber-800 font-medium transition-colors">Contact</a>
+            <a href="{{ route('dashboard') }}" class="text-gray-700 hover:text-amber-800 font-medium transition-colors">Dashboard</a>
+            <a href="{{ route('contact') }}" class="text-gray-700 hover:text-amber-800 font-medium transition-colors">Contact</a>
         </nav>
         <div id="authSection" class="flex items-center space-x-4">
         </div>

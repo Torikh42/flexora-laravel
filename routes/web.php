@@ -6,6 +6,7 @@ use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ContactController;
 
 Route::get('/', function () {
     return view('home');
@@ -34,6 +35,9 @@ Route::post('/logout', function () {
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->name('dashboard');
+
+// Contact route
+Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 
 use App\Http\Controllers\BookingController;
 
