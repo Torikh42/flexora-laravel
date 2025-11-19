@@ -16,6 +16,78 @@ class EnrollmentController extends Controller
     }
 
     /**
+     * Get user's enrollments with memberships (for dashboard)
+     */
+    public function getUserEnrollments()
+    {
+        $user = auth('api')->user() ?? auth()->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthenticated'], 401);
+        }
+
+        // Get enrollments with schedule details
+        $enrollments = $user->enrollments()
+            ->with(['schedule.studioClass', 'user'])
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($enrollment) {
+                $imageUrl = null;
+                if ($enrollment->schedule->studioClass->image) {
+                    $image = $enrollment->schedule->studioClass->image;
+                    // Try different paths
+                    if (file_exists(public_path('images/' . $image))) {
+                        $imageUrl = asset('images/' . $image);
+                    } elseif (file_exists(public_path('storage/' . $image))) {
+                        $imageUrl = asset('storage/' . $image);
+                    } else {
+                        // Just use the image name as filename in public/images
+                        $imageUrl = asset('images/' . $image);
+                    }
+                }
+                
+                return [
+                    'id' => $enrollment->id,
+                    'class_name' => $enrollment->schedule->studioClass->name,
+                    'class_slug' => $enrollment->schedule->studioClass->slug,
+                    'class_image' => $imageUrl,
+                    'instructor' => $enrollment->schedule->instructor ?? 'Instructor',
+                    'schedule_date' => Carbon::parse($enrollment->schedule->start_time)->format('Y-m-d'),
+                    'schedule_time' => Carbon::parse($enrollment->schedule->start_time)->format('H:i'),
+                    'status' => $enrollment->status,
+                    'enrollment_type' => $enrollment->enrollment_type,
+                    'created_at' => Carbon::parse($enrollment->created_at)->format('d M Y'),
+                ];
+            });
+
+        // Get active memberships
+        $activeMemberships = $user->userMemberships()
+            ->where('end_date', '>=', Carbon::today())
+            ->with('membership')
+            ->get()
+            ->map(function ($userMembership) {
+                return [
+                    'id' => $userMembership->id,
+                    'membership_name' => $userMembership->membership->name,
+                    'start_date' => Carbon::parse($userMembership->start_date)->format('d M Y'),
+                    'end_date' => Carbon::parse($userMembership->end_date)->format('d M Y'),
+                    'days_remaining' => Carbon::parse($userMembership->end_date)->diffInDays(Carbon::today()),
+                ];
+            });
+
+        return response()->json([
+            'user' => [
+                'name' => $user->name,
+                'email' => $user->email,
+            ],
+            'enrollments' => $enrollments,
+            'active_memberships' => $activeMemberships,
+            'total_enrollments' => $enrollments->count(),
+            'confirmed_count' => $enrollments->where('status', 'confirmed')->count(),
+            'pending_count' => $enrollments->where('status', 'pending')->count(),
+        ]);
+    }
+
+    /**
      * Show the form for creating a new resource.
      */
     public function create()

@@ -5,6 +5,7 @@ use App\Http\Controllers\StudioClassController;
 use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
     return view('home');
@@ -28,6 +29,11 @@ Route::post('/logout', function () {
     auth()->logout();
     return redirect('/login');
 })->name('logout');
+
+// Dashboard routes - aksesible untuk semua, proteksi via JavaScript
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->name('dashboard');
 
 use App\Http\Controllers\BookingController;
 

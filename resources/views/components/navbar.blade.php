@@ -77,6 +77,7 @@
               if (user) {
                 const firstName = user.name.split(' ')[0];
                 authSection.innerHTML = `
+                  <a href="{{ route('dashboard') }}" class="text-gray-700 hover:text-amber-800 font-medium transition-colors">Dashboard</a>
                   <span class="text-gray-700">Halo, <b class="font-semibold">${firstName}</b></span>
                   <button id="logoutBtn" class="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors">Logout</button>
                 `;

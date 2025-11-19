@@ -31,5 +31,6 @@ Route::get('classes/available-by-date', [StudioClassController::class, 'availabl
 
 Route::middleware('auth:api')->group(function () {
     Route::post('enrollments', [EnrollmentController::class, 'store']);
+    Route::get('enrollments', [EnrollmentController::class, 'getUserEnrollments']);
     Route::post('memberships/{id}/purchase', [MembershipController::class, 'purchaseApi']);
 });
