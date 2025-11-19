@@ -33,16 +33,7 @@ class EnrollmentController extends Controller
             ->map(function ($enrollment) {
                 $imageUrl = null;
                 if ($enrollment->schedule->studioClass->image) {
-                    $image = $enrollment->schedule->studioClass->image;
-                    // Try different paths
-                    if (file_exists(public_path('images/' . $image))) {
-                        $imageUrl = asset('images/' . $image);
-                    } elseif (file_exists(public_path('storage/' . $image))) {
-                        $imageUrl = asset('storage/' . $image);
-                    } else {
-                        // Just use the image name as filename in public/images
-                        $imageUrl = asset('images/' . $image);
-                    }
+                    $imageUrl = asset('images/' . $enrollment->schedule->studioClass->image);
                 }
                 
                 return [

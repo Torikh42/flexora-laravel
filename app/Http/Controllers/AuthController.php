@@ -88,9 +88,13 @@ class AuthController extends Controller
     public function userProfile()
     {
         $user = Auth::user();
-        // Load relationships
-        $user->load('userMemberships', 'enrollments');
-        return response()->json($user);
+        // Return only basic user info, without heavy relationships
+        return response()->json([
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'created_at' => $user->created_at
+        ]);
     }
 
     /**
