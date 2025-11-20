@@ -48,7 +48,7 @@ Platform ini dirancang untuk menghubungkan instruktur fitness dengan member mela
 -   Harga berbeda untuk setiap paket
 -   Tracking tanggal aktif & berakhir membership
 -   Countdown hari tersisa untuk membership yang aktif
--   Purchase membership dengan validasi pembayaran
+-   **Alur Pembelian Membership**: Pengguna diarahkan ke halaman pembayaran khusus setelah memilih paket membership, sebelum membership diaktifkan.
 
 ### 5. **Dashboard Personal**
 
@@ -263,6 +263,7 @@ UserMembership (Tabel user_memberships)
 | GET    | `/dashboard`      | dashboard.blade.php     | User dashboard    |
 | GET    | `/contact`        | contact.blade.php       | Contact page      |
 | GET    | `/studio_classes` | classes/index.blade.php | List all classes  |
+| GET    | `/memberships/{membership}/payment` | pay_membership.blade.php | Halaman pembayaran paket membership  |
 
 ---
 

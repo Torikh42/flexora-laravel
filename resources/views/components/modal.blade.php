@@ -306,40 +306,12 @@
             return;
         }
 
-        if (!confirm(`Beli membership ${membershipName}? Biaya akan dikenakan sekarang.`)) {
+        if (!confirm(`Beli membership ${membershipName}? Anda akan diarahkan ke halaman pembayaran.`)) {
             return;
         }
 
-        fetch(`/api/memberships/${membershipId}/purchase`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            }
-        })
-        .then(async (res) => {
-            if (res.status === 201) {
-                const data = await res.json();
-                alert(`✅ Berhasil membeli membership ${membershipName}! Sekarang Anda memiliki akses ke semua kelas.`);
-                window.location.reload();
-            } else if (res.status === 422) {
-                const err = await res.json().catch(() => ({}));
-                alert(`⚠️ ${err.message || 'Anda sudah memiliki membership aktif. Silakan tunggu hingga berakhir.'}`);
-            } else if (res.status === 401) {
-                alert('Sesi Anda telah habis. Silakan login ulang.');
-                localStorage.removeItem('auth_token');
-                window.location.href = '/login';
-            } else {
-                const err = await res.json().catch(() => ({}));
-                console.error('Purchase failed', err);
-                alert('❌ Gagal membeli membership. Silakan coba lagi.');
-            }
-        })
-        .catch((err) => {
-            console.error('Network error purchasing:', err);
-            alert('❌ Terjadi kesalahan jaringan. Silakan coba lagi.');
-        });
+        // Redirect to the membership payment page with token
+        window.location.href = `/memberships/${membershipId}/payment?token=${encodeURIComponent(token)}`;
     }
 
 </script>

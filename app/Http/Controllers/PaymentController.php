@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Schedule;
 use App\Models\Enrollment;
+use App\Models\Membership;
+use App\Models\UserMembership;
+use Carbon\Carbon;
 
 class PaymentController extends Controller
 {
@@ -65,5 +68,92 @@ class PaymentController extends Controller
             'enrollment' => $enrollment,
             'user' => $user
         ]);
+    }
+
+    /**
+     * Show payment page for a membership
+     */
+    public function showMembershipPayment(Request $request, Membership $membership)
+    {
+        // Try to get user dari berbagai sumber:
+        // 1. API guard (JWT token di header)
+        $user = Auth::guard('api')->user();
+        
+        // 2. Web guard (session)
+        if (!$user) {
+            $user = Auth::guard('web')->user();
+        }
+        
+        // 3. Fallback ke default
+        if (!$user) {
+            $user = Auth::user();
+        }
+        
+        // If still no user, redirect to login
+        if (!$user) {
+            return redirect('/login')->with('error', 'Anda harus login terlebih dahulu');
+        }
+
+        return view('pay_membership', [
+            'membership' => $membership,
+            'user' => $user
+        ]);
+    }
+
+    /**
+     * Process the payment for a membership and create the user membership
+     */
+    public function processMembershipPayment(Request $request, Membership $membership)
+    {
+        // Try to get user dari berbagai sumber:
+        // 1. API guard (JWT token di header)
+        $user = Auth::guard('api')->user();
+        
+        // 2. Jika ada token di POST body/query, validate dan gunakan
+        if (!$user && $request->has('token')) {
+            try {
+                $token = $request->input('token');
+                // Validate token manually
+                $payload = \JWTAuth::parseToken()->getPayload();
+                $user = User::find($payload->get('sub'));
+            } catch (\Exception $e) {
+                \Log::warning('Invalid JWT token in POST body: ' . $e->getMessage());
+            }
+        }
+        
+        // 3. Web guard (session)
+        if (!$user) {
+            $user = Auth::guard('web')->user();
+        }
+        
+        // 4. Fallback ke default
+        if (!$user) {
+            $user = Auth::user();
+        }
+        
+        // Debug: Log untuk lihat user detection
+        \Log::info('processMembershipPayment - User detection:', [
+            'api_user' => Auth::guard('api')->user() ? Auth::guard('api')->user()->id : null,
+            'post_token_user' => $user ? $user->id : null,
+            'web_user' => Auth::guard('web')->user() ? Auth::guard('web')->user()->id : null,
+        ]);
+        
+        // If still no user, redirect to login
+        if (!$user) {
+            \Log::warning('processMembershipPayment - No user found, redirecting to login');
+            return redirect('/login')->with('error', 'Anda harus login terlebih dahulu');
+        }
+
+        // Here you would typically process a real payment.
+        // For now, we will just create the membership directly.
+
+        $userMembership = new UserMembership();
+        $userMembership->user_id = $user->id;
+        $userMembership->membership_id = $membership->id;
+        $userMembership->start_date = Carbon::now();
+        $userMembership->end_date = Carbon::now()->addDays($membership->duration_days);
+        $userMembership->save();
+
+        return redirect()->route('home')->with('success', 'Anda berhasil membeli membership.');
     }
 }

@@ -28,14 +28,7 @@ class MembershipController extends Controller
      */
     public function purchase(Request $request, Membership $membership)
     {
-        $userMembership = new UserMembership();
-        $userMembership->user_id = auth()->id();
-        $userMembership->membership_id = $membership->id;
-        $userMembership->start_date = now();
-        $userMembership->end_date = now()->addDays($membership->duration_days);
-        $userMembership->save();
-
-        return redirect()->route('home')->with('success', 'You have successfully purchased a membership.');
+        return redirect()->route('memberships.payment', $membership);
     }
     
     /**
