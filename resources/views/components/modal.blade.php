@@ -310,8 +310,45 @@
             return;
         }
 
-        // Redirect to the membership payment page with token
-        window.location.href = `/memberships/${membershipId}/payment?token=${encodeURIComponent(token)}`;
+        // Check if user already has active membership
+        fetch(`/api/auth/user-profile`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(res => res.json())
+        .then(user => {
+            // Check for active membership
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            let hasActiveMembership = false;
+            
+            if (user.user_memberships && user.user_memberships.length > 0) {
+                for (let membership of user.user_memberships) {
+                    const endDate = new Date(membership.end_date);
+                    endDate.setHours(0, 0, 0, 0);
+                    
+                    if (endDate >= today) {
+                        hasActiveMembership = true;
+                        alert(`Anda sudah memiliki membership yang aktif hingga ${endDate.toLocaleDateString('id-ID')}. Silakan tunggu hingga berakhir untuk membeli membership baru.`);
+                        break;
+                    }
+                }
+            }
+            
+            // Only redirect if no active membership
+            if (!hasActiveMembership) {
+                window.location.href = `/memberships/${membershipId}/payment?token=${encodeURIComponent(token)}`;
+            }
+        })
+        .catch(err => {
+            console.error('Error checking membership:', err);
+            alert('Terjadi kesalahan saat memeriksa membership. Silakan coba lagi.');
+        });
     }
 
 </script>

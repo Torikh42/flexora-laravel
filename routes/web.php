@@ -34,7 +34,6 @@ Route::get('/dashboard', function () {
 
 // ============= RESOURCE ROUTES =============
 Route::resource('studio_classes', StudioClassController::class);
-Route::resource('memberships', MembershipController::class);
 Route::resource('enrollments', EnrollmentController::class);
 
 // ============= PAYMENT ROUTES =============

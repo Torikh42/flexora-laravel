@@ -124,15 +124,28 @@ class EnrollmentController extends Controller
 
         if ($activeMembership) {
             // User has active membership - validate schedule date is within membership period
-            $scheduleDate = Carbon::parse($schedule->start_time)->toDateString();
-            $membershipStart = $activeMembership->start_date;
-            $membershipEnd = $activeMembership->end_date;
+            $scheduleDate = Carbon::parse($schedule->start_time);
+            $membershipEnd = Carbon::parse($activeMembership->end_date);
+            
+            // Reset time for date-only comparison
+            $scheduleDate->setTime(0, 0, 0);
+            $membershipEnd->setTime(0, 0, 0);
 
-            if ($scheduleDate < $membershipStart || $scheduleDate > $membershipEnd) {
+            if ($scheduleDate->gt($membershipEnd)) {
+                // Schedule is after membership ends - require payment
+                $enrollment = \App\Models\Enrollment::create([
+                    'user_id' => $user->id,
+                    'schedule_id' => $scheduleId,
+                    'status' => 'pending',
+                    'enrollment_type' => 'paid',
+                ]);
+
                 return response()->json([
-                    'message' => 'Class is outside your membership period',
-                    'membership_end_date' => $membershipEnd
-                ], 409);
+                    'message' => 'Kelas ini diluar periode membership Anda. Pembayaran diperlukan.',
+                    'enrollment' => $enrollment,
+                    'enrollment_type' => 'paid',
+                    'membership_end_date' => $activeMembership->end_date
+                ], 402);
             }
 
             // Create enrollment as free (via membership)

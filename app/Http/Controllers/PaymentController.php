@@ -94,6 +94,15 @@ class PaymentController extends Controller
             return redirect('/login')->with('error', 'Anda harus login terlebih dahulu');
         }
 
+        // Check if user already has an active membership
+        $activeMembership = $user->userMemberships()
+            ->where('end_date', '>=', Carbon::today())
+            ->first();
+        
+        if ($activeMembership) {
+            return redirect('/')->with('error', 'Anda sudah memiliki membership yang aktif hingga ' . $activeMembership->end_date->format('d-m-Y') . '. Silakan tunggu hingga berakhir untuk membeli membership baru.');
+        }
+
         return view('pay_membership', [
             'membership' => $membership,
             'user' => $user
@@ -142,6 +151,15 @@ class PaymentController extends Controller
         if (!$user) {
             \Log::warning('processMembershipPayment - No user found, redirecting to login');
             return redirect('/login')->with('error', 'Anda harus login terlebih dahulu');
+        }
+
+        // Check if user already has an active membership
+        $activeMembership = $user->userMemberships()
+            ->where('end_date', '>=', Carbon::today())
+            ->first();
+        
+        if ($activeMembership) {
+            return redirect('/')->with('error', 'Anda sudah memiliki membership yang aktif hingga ' . $activeMembership->end_date->format('d-m-Y') . '. Silakan tunggu hingga berakhir untuk membeli membership baru.');
         }
 
         // Here you would typically process a real payment.
