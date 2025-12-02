@@ -28,14 +28,22 @@ class StudioClassController extends Controller
     public function availableByDate(Request $request)
     {
         $request->validate([
-            'date' => 'required|date_format:Y-m-d'
+            'date' => 'required|date_format:Y-m-d',
+            'class_id' => 'nullable|integer|exists:studio_classes,id'
         ]);
 
         $date = $request->query('date');
+        $classId = $request->query('class_id');
         
-        $schedules = \App\Models\Schedule::whereDate('start_time', $date)
-            ->with('studioClass')
-            ->get();
+        $query = \App\Models\Schedule::whereDate('start_time', $date)
+            ->with('studioClass');
+        
+        // Filter by class_id if provided
+        if ($classId) {
+            $query->where('studio_class_id', $classId);
+        }
+        
+        $schedules = $query->get();
 
         return response()->json(['schedules' => $schedules], 200);
     }

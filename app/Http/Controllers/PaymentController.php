@@ -63,6 +63,12 @@ class PaymentController extends Controller
             ]);
         }
 
+        // Update enrollment status to confirmed (payment successful)
+        if ($enrollment->status === 'pending') {
+            $enrollment->status = 'confirmed';
+            $enrollment->save();
+        }
+
         return view('invoice_kelas', [
             'schedule' => $schedule,
             'enrollment' => $enrollment,

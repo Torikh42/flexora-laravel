@@ -17,21 +17,21 @@ class MembershipSeeder extends Seeder
             'name' => 'Trial 2 Minggu',
             'price' => 150000,
             'duration_days' => 14,
-            'description' => '3x Pertemuan',
+            'description' => '',
         ]);
 
         Membership::create([
             'name' => 'Bulanan',
             'price' => 500000,
             'duration_days' => 30,
-            'description' => '6-7x Pertemuan / bulan',
+            'description' => '',
         ]);
 
         Membership::create([
             'name' => 'Tahunan',
             'price' => 6000000,
             'duration_days' => 365,
-            'description' => '72 pertemuan / tahun',
+            'description' => '',
         ]);
     }
 }

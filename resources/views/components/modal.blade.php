@@ -63,7 +63,7 @@
     function loadSchedulesForDate(date) {
         const token = localStorage.getItem('auth_token');
 
-        fetch(`/api/classes/available-by-date?date=${date}`, {
+        fetch(`/api/classes/available-by-date?date=${date}&class_id=${currentClassId}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
