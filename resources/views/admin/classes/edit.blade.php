@@ -30,7 +30,7 @@
         @if($class->image)
             <div class="mb-6">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Gambar Saat Ini</label>
-                <img src="{{ asset('storage/' . $class->image) }}" alt="{{ $class->name }}" class="w-32 h-32 object-cover rounded-lg">
+                <img src="/storage/{{ $class->image }}" alt="{{ $class->name }}" class="w-32 h-32 object-cover rounded-lg">
             </div>
         @endif
 

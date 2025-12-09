@@ -15,8 +15,13 @@
                      class="cursor-pointer bg-white/60 backdrop-blur-xl border border-white/20 rounded-2xl shadow-xl p-6 
                             transition-all duration-300 hover:bg-white/75 hover:scale-[1.03] hover:shadow-2xl">
                     
-                    <img src="{{ asset('images/' . ($class->image ?? 'default.jpg')) }}"
-                         class="w-full h-48 object-cover rounded-xl mb-5">
+                    @if(Str::startsWith($class->image, 'classes/'))
+                        <img src="/storage/{{ $class->image }}"
+                             class="w-full h-48 object-cover rounded-xl mb-5" alt="{{ $class->name }}">
+                    @else
+                        <img src="{{ asset('images/' . ($class->image ?? 'default.jpg')) }}"
+                             class="w-full h-48 object-cover rounded-xl mb-5" alt="{{ $class->name }}">
+                    @endif
                     <h3 class="text-2xl font-semibold text-gray-900 mb-2">{{ $class->name }}</h3>
                     <p class="text-gray-700 text-sm leading-relaxed">{{ Str::limit($class->description, 150) }}</p>
                 </div>

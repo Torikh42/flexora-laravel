@@ -36,7 +36,7 @@
                     <td class="px-6 py-4 text-sm text-gray-500">{{ $class->schedules_count }} jadwal</td>
                     <td class="px-6 py-4">
                         @if($class->image)
-                            <img src="{{ asset('storage/' . $class->image) }}" alt="{{ $class->name }}" class="w-16 h-16 object-cover rounded">
+                            <img src="/storage/{{ $class->image }}" alt="{{ $class->name }}" class="w-16 h-16 object-cover rounded">
                         @else
                             <span class="text-gray-400 text-xs">No Image</span>
                         @endif
