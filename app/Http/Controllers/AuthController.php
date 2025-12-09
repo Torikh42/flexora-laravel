@@ -50,12 +50,35 @@ class AuthController extends Controller
             return response()->json($validator->errors()->toJson(), 400);
         }
 
-        $user = User::create($validator->validated());
+        $userData = $validator->validated();
+        $userData['role'] = 'user'; 
+        $user = User::create($userData);
 
         return response()->json([
             'message' => 'User successfully registered',
             'user' => $user
         ], 201);
+    }
+    public function webLogin(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string|min:6',
+        ]);
+
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            
+            if (auth()->user()->role === 'admin') {
+                return redirect('/admin/dashboard');
+            }
+            
+            return redirect('/dashboard');
+        }
+
+        return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ])->onlyInput('email');
     }
 
     /**
@@ -98,6 +121,7 @@ class AuthController extends Controller
             'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
+            'role' => $user->role,
             'created_at' => $user->created_at,
             'user_memberships' => $user->userMemberships,
             'enrollments' => $user->enrollments
@@ -113,11 +137,17 @@ class AuthController extends Controller
      */
     protected function createNewToken($token)
     {
+        $user = Auth::guard('api')->user();
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => Auth::guard('api')->factory()->getTTL() * 60,
-            'user' => Auth::user()
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+            ]
         ]);
     }
 }

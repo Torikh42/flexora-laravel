@@ -90,7 +90,7 @@
   async function loadDashboardData(token) {
     try {
       const response = await fetch('/api/enrollments', {
-        method: 'GET',
+        method:  'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Accept': 'application/json',

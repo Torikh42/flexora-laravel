@@ -8,12 +8,13 @@
             <nav class="hidden md:flex space-x-8 items-center">
                 <a href="{{ route('home') }}" class="text-gray-700 hover:text-amber-800 font-medium transition-colors">Home</a>
                 <a href="{{ route('studio_classes.index') }}" class="text-gray-700 hover:text-amber-800 font-medium transition-colors">Classes</a>
-                <a href="{{ route('dashboard') }}" class="text-gray-700 hover:text-amber-800 font-medium transition-colors">Dashboard</a>
+                <a id="dashboardLink" href="#" class="text-gray-700 hover:text-amber-800 font-medium transition-colors hidden">Dashboard</a>
                 <a href="{{ route('contact') }}" class="text-gray-700 hover:text-amber-800 font-medium transition-colors">Contact</a>
             </nav>
 
-            <div id="authSectionDesktop" class="hidden md:flex items-center space-x-4">
-                </div>
+            <div id="authSection" class="hidden md:flex items-center space-x-4">
+                <!-- Will be populated by JavaScript -->
+            </div>
 
             <div class="md:hidden flex items-center">
                 <button id="mobileMenuBtn" class="text-gray-700 hover:text-amber-800 focus:outline-none">
@@ -29,170 +30,126 @@
         <div class="px-4 py-4 space-y-3 flex flex-col">
             <a href="{{ route('home') }}" class="block text-gray-700 hover:text-amber-800 font-medium py-2">Home</a>
             <a href="{{ route('studio_classes.index') }}" class="block text-gray-700 hover:text-amber-800 font-medium py-2">Classes</a>
-            <a href="{{ route('dashboard') }}" class="block text-gray-700 hover:text-amber-800 font-medium py-2">Dashboard</a>
+            <a id="dashboardLinkMobile" href="#" class="block text-gray-700 hover:text-amber-800 font-medium py-2 hidden">Dashboard</a>
             <a href="{{ route('contact') }}" class="block text-gray-700 hover:text-amber-800 font-medium py-2">Contact</a>
             
             <hr class="border-gray-200 my-2">
             
             <div id="authSectionMobile" class="flex flex-col space-y-3">
-                </div>
+                <!-- Will be populated by JavaScript -->
+            </div>
         </div>
     </div>
 </header>
 
 <script>
     document.addEventListener("DOMContentLoaded", async function() {
-        // --- Mobile Menu Toggle Logic ---
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const mobileMenu = document.getElementById('mobileMenu');
+        const authSection = document.getElementById('authSection');
+        const authSectionMobile = document.getElementById('authSectionMobile');
+        const dashboardLink = document.getElementById('dashboardLink');
+        const dashboardLinkMobile = document.getElementById('dashboardLinkMobile');
 
-        mobileMenuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
+        // Mobile menu toggle
+        if (mobileMenuBtn && mobileMenu) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
 
-        // --- Auth Logic ---
-        setTimeout(async () => {
-            const authSectionDesktop = document.getElementById("authSectionDesktop");
-            const authSectionMobile = document.getElementById("authSectionMobile");
-            
-            let token = localStorage.getItem('auth_token');
-            console.log('Navbar script loaded. Token exists:', !!token);
+        // Check authentication
+        const token = localStorage.getItem('auth_token');
+        
+        if (!token) {
+            // Not logged in
+            authSection.innerHTML = `
+                <a href="{{ route('login') }}" class="text-gray-700 hover:text-amber-800 font-medium transition-colors">Log in</a>
+                <a href="{{ route('signup') }}" class="px-4 py-2 bg-stone-700 text-white rounded-lg hover:bg-stone-800 transition-colors">Sign Up</a>
+            `;
+            authSectionMobile.innerHTML = `
+                <a href="{{ route('login') }}" class="block text-center text-gray-700 font-medium py-2 border border-gray-300 rounded-lg hover:bg-gray-50">Log in</a>
+                <a href="{{ route('signup') }}" class="block text-center px-4 py-2 bg-stone-700 text-white rounded-lg hover:bg-stone-800">Sign Up</a>
+            `;
+        } else {
+            // Logged in - fetch user profile
+            try {
+                const response = await fetch('/api/auth/user-profile', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json'
+                    }
+                });
 
-            // Helper to attach logout listener safely
-            const attachLogoutListener = (btnId) => {
-                const btn = document.getElementById(btnId);
-                if (btn) {
-                    btn.addEventListener("click", handleLogout);
-                }
-            };
+                if (response.ok) {
+                    const user = await response.json();
+                    const firstName = user.name.split(' ')[0];
+                    const isAdmin = user.role === 'admin';
+                    const dashboardUrl = isAdmin ? `/admin/dashboard?token=${token}` : '/dashboard';
 
-            // Shared Logout Function
-            const handleLogout = async () => {
-                try {
-                    const response = await fetch('/api/auth/logout', {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json',
-                        }
-                    });
-                    // Always clear token regardless of server response
+                    // Show dashboard link
+                    dashboardLink.href = dashboardUrl;
+                    dashboardLink.classList.remove('hidden');
+                    dashboardLinkMobile.href = dashboardUrl;
+                    dashboardLinkMobile.classList.remove('hidden');
+
+                    // Desktop auth section
+                    authSection.innerHTML = `
+                        ${isAdmin ? `<a href="/admin/dashboard?token=${token}" class="text-amber-800 hover:text-amber-900 font-semibold flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                            </svg>
+                            Admin
+                        </a>` : ''}
+                        <span class="text-gray-700">Halo, <b class="font-semibold">${firstName}</b></span>
+                        <button onclick="handleLogout()" class="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors text-sm">Logout</button>
+                    `;
+
+                    // Mobile auth section
+                    authSectionMobile.innerHTML = `
+                        ${isAdmin ? `<a href="/admin/dashboard?token=${token}" class="block text-center text-amber-800 font-semibold py-2 border border-amber-300 rounded-lg hover:bg-amber-50 flex items-center justify-center">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                            </svg>
+                            Admin Panel
+                        </a>` : ''}
+                        <div class="text-gray-700 font-medium py-2">Halo, <b class="font-semibold text-amber-800">${firstName}</b></div>
+                        <button onclick="handleLogout()" class="w-full text-center px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors">Logout</button>
+                    `;
+                } else {
+                    // Token invalid
                     localStorage.removeItem('auth_token');
-                    window.location.href = '/';
-                } catch (error) {
-                    console.error('Error during logout:', error);
-                    localStorage.removeItem('auth_token');
-                    window.location.href = '/';
+                    location.reload();
                 }
-            };
-
-            // Function to render "Logged Out" state
-            const renderLoggedOut = () => {
-                console.log('Rendering logged out state.');
-                
-                // Desktop View
-                authSectionDesktop.innerHTML = `
-                    <a href="{{ route('login') }}" class="text-gray-700 hover:text-amber-800 font-medium transition-colors">Log in</a>
-                    <a href="{{ route('signup') }}" class="px-4 py-2 bg-stone-700 text-white rounded-lg hover:bg-stone-800 transition-colors">Sign Up</a>
-                `;
-
-                // Mobile View (Stacked buttons)
-                authSectionMobile.innerHTML = `
-                    <a href="{{ route('login') }}" class="block text-center text-gray-700 font-medium py-2 border border-gray-300 rounded-lg hover:bg-gray-50">Log in</a>
-                    <a href="{{ route('signup') }}" class="block text-center px-4 py-2 bg-stone-700 text-white rounded-lg hover:bg-stone-800">Sign Up</a>
-                `;
-            };
-
-            // Function to render "Logged In" state
-            const renderLoggedIn = (user) => {
-                const firstName = user.name.split(' ')[0];
-
-                // Desktop View
-                authSectionDesktop.innerHTML = `
-                    <span class="text-gray-700">Halo, <b class="font-semibold">${firstName}</b></span>
-                    <button id="logoutBtnDesktop" class="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors text-sm">Logout</button>
-                `;
-
-                // Mobile View
-                authSectionMobile.innerHTML = `
-                     <div class="text-gray-700 font-medium py-2">Halo, <b class="font-semibold text-amber-800">${firstName}</b></div>
-                     <button id="logoutBtnMobile" class="w-full text-center px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors">Logout</button>
-                `;
-
-                // Attach listeners to the newly created buttons
-                attachLogoutListener('logoutBtnDesktop');
-                attachLogoutListener('logoutBtnMobile');
-            };
-
-            const refreshToken = async () => {
-                try {
-                    const response = await fetch('/api/auth/refresh', {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json',
-                        }
-                    });
-
-                    if (response.ok) {
-                        const data = await response.json();
-                        token = data.access_token;
-                        localStorage.setItem('auth_token', token);
-                        return true;
-                    }
-                    return false;
-                } catch (error) {
-                    return false;
-                }
-            };
-
-            const fetchUserProfile = async () => {
-                try {
-                    const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 5000);
-
-                    const response = await fetch('/api/auth/user-profile', {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json',
-                        },
-                        signal: controller.signal
-                    });
-
-                    clearTimeout(timeoutId);
-
-                    if (response.ok) {
-                        const user = await response.json();
-                        renderLoggedIn(user);
-                    } else {
-                        // Token invalid or expired
-                        localStorage.removeItem('auth_token');
-                        renderLoggedOut();
-                    }
-                } catch (error) {
-                    console.error('Error fetching profile:', error);
-                    renderLoggedOut();
-                }
-            };
-
-            // --- Main Execution Flow ---
-            if (!token) {
-                renderLoggedOut();
-            } else {
-                await fetchUserProfile();
-                
-                // Auto-refresh logic
-                setInterval(async () => {
-                    if (localStorage.getItem('auth_token')) {
-                        await refreshToken();
-                    }
-                }, 600000);
+            } catch (error) {
+                console.error('Error fetching user profile:', error);
+                localStorage.removeItem('auth_token');
+                location.reload();
             }
-
-        }, 100);
+        }
     });
+
+    // Global logout function
+    function handleLogout() {
+        const token = localStorage.getItem('auth_token');
+        
+        // Delete cookie
+        document.cookie = 'auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        
+        if (token) {
+            fetch('/api/auth/logout', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Accept': 'application/json'
+                }
+            }).finally(() => {
+                localStorage.removeItem('auth_token');
+                window.location.href = '/';
+            });
+        } else {
+            localStorage.removeItem('auth_token');
+            window.location.href = '/';
+        }
+    }
 </script>

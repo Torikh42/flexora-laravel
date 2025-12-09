@@ -13,9 +13,23 @@
         <h2 class="text-3xl font-bold mb-6 text-gray-900">Welcome to Flexora</h2>
 
         <form id="loginForm">
+            @csrf
+            
+            @if(session('success'))
+                <div class="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
+                    {{ session('success') }}
+                </div>
+            @endif
+            
+            @if($errors->any())
+                <div class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                    {{ $errors->first() }}
+                </div>
+            @endif
+            
             <div class="mb-4 text-left">
                 <label for="email" class="block mb-2 font-medium text-sm text-gray-700">Email</label>
-                <input type="email" id="email" name="email" placeholder="Enter your email" required
+                <input type="email" id="email" name="email" placeholder="Enter your email" required value="{{ old('email') }}"
                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 text-sm 
                               focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
@@ -51,14 +65,18 @@
     </footer>
 
     <script>
-        document.getElementById("loginForm").addEventListener("submit", async function(e){
-            e.preventDefault();
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
+        // Helper function to set cookie
+        function setCookie(name, value, days) {
+            const expires = new Date();
+            expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+            document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+        }
 
-            if (!email || !password) {
-                return alert("⚠️ Email and Password cannot be empty!");
-            }
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
 
             try {
                 const response = await fetch('/api/auth/login', {
@@ -67,24 +85,29 @@
                         'Content-Type': 'application/json',
                         'Accept': 'application/json',
                     },
-                    body: JSON.stringify({
-                        email: email,
-                        password: password
-                    })
+                    body: JSON.stringify({ email, password })
                 });
 
                 const data = await response.json();
 
                 if (response.ok) {
+                    // Store JWT token in localStorage AND cookie
                     localStorage.setItem('auth_token', data.access_token);
-                    alert('✅ Login Successful!');
-                    window.location.href = "{{ url('/') }}";
+                    setCookie('auth_token', data.access_token, 7); // 7 days
+                    
+                    // Check user role and redirect accordingly
+                    if (data.user && data.user.role === 'admin') {
+                        // Redirect admin to admin dashboard (no need for token in URL)
+                        window.location.href = '/admin/dashboard';
+                    } else {
+                        window.location.href = '/dashboard';
+                    }
                 } else {
-                    alert(`❌ ${data.error || 'Login failed. Please check your credentials.'}`);
+                    alert(`❌ Login failed: ${data.error || 'Please check your credentials'}`);
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('❌ An error occurred during login.');
+                alert('❌ An error occurred during login');
             }
         });
     </script>

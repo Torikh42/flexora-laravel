@@ -27,6 +27,10 @@ Route::post('/logout', function () {
     return redirect('/login');
 })->name('logout');
 
+// ============= WEB LOGIN (for Admin Panel) =============
+use App\Http\Controllers\AuthController;
+Route::post('/web-login', [AuthController::class, 'webLogin'])->name('web.login');
+
 // ============= DASHBOARD ROUTE =============
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -51,3 +55,14 @@ Route::post('/memberships/{membership}/purchase', [MembershipController::class, 
 
 // ============= CONTACT ROUTE =============
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
+
+// ============= ADMIN ROUTES =============
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminClassController;
+use App\Http\Controllers\Admin\AdminMembershipController;
+
+Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::resource('classes', AdminClassController::class);
+    Route::resource('memberships', AdminMembershipController::class);
+});
