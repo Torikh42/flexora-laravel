@@ -26,15 +26,35 @@ Platform ini dirancang untuk menghubungkan instruktur fitness dengan member mela
 -   Login/Logout dengan sistem JWT Token
 -   Token disimpan di localStorage untuk sesi yang persisten
 -   Profile management untuk update data user
+-   Role-based access (Admin/Member)
 
-### 2. **Kelas Fitness**
+### 2. **Admin Panel** 🆕
+
+-   **Dashboard Admin**: Overview statistik users, classes, enrollments, dan memberships
+-   **Manajemen Kelas (CRUD)**:
+    -   Create, Read, Update, Delete kelas fitness
+    -   Upload gambar kelas
+    -   Manage deskripsi dan informasi kelas
+-   **Manajemen Membership (CRUD)**:
+    -   Create, Read, Update, Delete paket membership
+    -   Set harga dan durasi membership
+    -   Track jumlah user per membership
+-   **Manajemen Jadwal (CRUD)** 🆕:
+    -   Create, Read, Update, Delete jadwal kelas
+    -   Set instruktur, waktu mulai & selesai
+    -   Manage harga per sesi
+    -   Link jadwal ke kelas tertentu
+-   **Custom Pagination**: White theme dengan better spacing
+-   **Sidebar Navigation**: Quick access ke semua fitur admin
+
+### 3. **Kelas Fitness**
 
 -   Daftar semua kelas yang tersedia (Yoga, Pilates, Pole Dance, dll)
 -   Informasi detail: instruktur, jadwal, durasi, deskripsi kelas
--   Gambar kelas dengan fallback emoji
+-   Gambar kelas dengan storage system yang proper
 -   Filter dan search kelas berdasarkan nama
 
-### 3. **Sistem Booking Kelas**
+### 4. **Sistem Booking Kelas**
 
 -   **Booking dengan Membership**: Member dengan membership aktif bisa booking gratis
 -   **Booking dengan Paid**: Dapat membayar per kelas tanpa membership
@@ -42,7 +62,7 @@ Platform ini dirancang untuk menghubungkan instruktur fitness dengan member mela
 -   Batasan kuota: Setiap kelas punya batasan jumlah peserta
 -   Notifikasi status perubahan
 
-### 4. **Membership**
+### 5. **Membership**
 
 -   Berbagai paket membership (1 bulan, 3 bulan, 6 bulan, 1 tahun)
 -   Harga berbeda untuk setiap paket
@@ -50,7 +70,7 @@ Platform ini dirancang untuk menghubungkan instruktur fitness dengan member mela
 -   Countdown hari tersisa untuk membership yang aktif
 -   **Alur Pembelian Membership**: Pengguna diarahkan ke halaman pembayaran khusus setelah memilih paket membership, sebelum membership diaktifkan.
 
-### 5. **Dashboard Personal**
+### 6. **Dashboard Personal**
 
 -   **Enrollment Cards**: Tampilkan semua kelas yang sudah di-booking
     -   Gambar kelas dengan gradient fallback
@@ -65,13 +85,13 @@ Platform ini dirancang untuk menghubungkan instruktur fitness dengan member mela
     -   Search by class name
     -   Live filtering dengan update count
 
-### 6. **Contact & Support**
+### 7. **Contact & Support**
 
 -   Halaman contact dengan informasi studio
 -   Detail: Alamat, Telepon, Email, Jam Operasional
 -   Form kontak (dummy) untuk komunikasi dengan admin
 
-### 7. **Navbar & Navigation**
+### 8. **Navbar & Navigation**
 
 -   Responsive navigation bar dengan hamburger menu
 -   Dynamic auth section (login/logout)
@@ -114,16 +134,18 @@ Platform ini dirancang untuk menghubungkan instruktur fitness dengan member mela
 User (Tabel Users)
 ├── hasMany() Enrollments
 ├── hasMany() UserMemberships
+├── Fields: name, email, password, role (admin/member)
 └── Relationships untuk tracking pemesanan & membership
 
 StudioClass (Tabel studio_classes)
 ├── hasMany() Schedules
 ├── Fields: name, slug, image, description
 
-Schedule (Tabel schedules)
+Schedule (Tabel schedules) 🆕
 ├── belongsTo() StudioClass
 ├── hasMany() Enrollments
-├── Fields: start_time, end_time, capacity, booked_count
+├── Fields: studio_class_id, instructor, start_time, end_time, price
+├── Casts: start_time (datetime), end_time (datetime)
 
 Enrollment (Tabel enrollments)
 ├── belongsTo() User
@@ -132,7 +154,7 @@ Enrollment (Tabel enrollments)
 
 Membership (Tabel memberships)
 ├── hasMany() UserMemberships
-├── Fields: name, price, duration_days
+├── Fields: name, price, duration_days, description
 
 UserMembership (Tabel user_memberships)
 ├── belongsTo() User
@@ -255,15 +277,15 @@ UserMembership (Tabel user_memberships)
 
 ### Web Routes (Blade Views)
 
-| Method | Route             | View                    | Description       |
-| ------ | ----------------- | ----------------------- | ----------------- |
-| GET    | `/`               | home.blade.php          | Home page         |
-| GET    | `/login`          | login.blade.php         | Login page        |
-| GET    | `/signup`         | signup.blade.php        | Registration page |
-| GET    | `/dashboard`      | dashboard.blade.php     | User dashboard    |
-| GET    | `/contact`        | contact.blade.php       | Contact page      |
-| GET    | `/studio_classes` | classes/index.blade.php | List all classes  |
-| GET    | `/memberships/{membership}/payment` | pay_membership.blade.php | Halaman pembayaran paket membership  |
+| Method | Route                               | View                     | Description                         |
+| ------ | ----------------------------------- | ------------------------ | ----------------------------------- |
+| GET    | `/`                                 | home.blade.php           | Home page                           |
+| GET    | `/login`                            | login.blade.php          | Login page                          |
+| GET    | `/signup`                           | signup.blade.php         | Registration page                   |
+| GET    | `/dashboard`                        | dashboard.blade.php      | User dashboard                      |
+| GET    | `/contact`                          | contact.blade.php        | Contact page                        |
+| GET    | `/studio_classes`                   | classes/index.blade.php  | List all classes                    |
+| GET    | `/memberships/{membership}/payment` | pay_membership.blade.php | Halaman pembayaran paket membership |
 
 ---
 
@@ -300,13 +322,62 @@ UserMembership (Tabel user_memberships)
 
 ---
 
-## 🔐 Keamanan
+## 🔐 Keamanan & Autentikasi
 
--   **JWT Authentication**: Token-based authentication untuk API
--   **CORS**: Diatur untuk allow requests dari frontend
--   **Validation**: Form validation di backend & frontend
--   **Database**: Query protection dengan Eloquent ORM
--   **HTTPS Ready**: Environment variables untuk production
+### Sistem Autentikasi Dual
+
+Flexora menggunakan **dua metode autentikasi** untuk kebutuhan yang berbeda:
+
+#### 1. **JWT (JSON Web Token)** - API & Member Area
+
+-   **Digunakan untuk**: API endpoints (`/api/*`) dan member frontend
+-   **Package**: `tymon/jwt-auth`
+-   **Flow**:
+    -   User login/register via API (`/api/auth/login`)
+    -   Token JWT dikirim ke frontend
+    -   Token disimpan di `localStorage`
+    -   Setiap request API menyertakan token di header: `Authorization: Bearer {token}`
+-   **Kegunaan**:
+    -   User enrollment/booking
+    -   Membership management
+    -   User dashboard data
+    -   Profile management
+-   **Keuntungan**: Stateless, cocok untuk SPA, mobile apps, dan API consumption
+
+#### 2. **Session-based Authentication** - Admin Panel
+
+-   **Digunakan untuk**: Admin panel (`/admin/*`)
+-   **Mechanism**: Laravel native session & cookies
+-   **Flow**:
+    -   Admin login via web form (`/web-login`)
+    -   Credentials dicek dengan `Auth::attempt()`
+    -   Session dibuat dan cookie dikirim
+    -   Middleware `AdminMiddleware` memvalidasi role admin
+-   **Kegunaan**:
+    -   Admin dashboard
+    -   CRUD operations (classes, memberships, schedules)
+    -   Admin-only features
+-   **Keuntungan**: Traditional web auth, lebih aman untuk sensitive operations, built-in CSRF protection
+
+#### Credentials Default
+
+**Admin Account** (untuk testing):
+
+```
+Email: admin@flexora.com
+Password: password
+Role: admin
+```
+
+### Fitur Keamanan Lainnya
+
+-   **CORS**: Dikonfigurasi untuk allow requests dari frontend
+-   **Validation**: Form validation di backend & frontend untuk semua input
+-   **Database Protection**: Query protection dengan Eloquent ORM untuk mencegah SQL injection
+-   **CSRF Protection**: Otomatis aktif untuk semua POST/PUT/DELETE requests di web routes
+-   **Password Hashing**: Menggunakan bcrypt untuk semua password
+-   **Role-based Access**: Middleware untuk membatasi akses admin panel
+-   **HTTPS Ready**: Environment variables siap untuk production deployment
 
 ---
 
@@ -358,12 +429,20 @@ npm run build
 flexora-laravel/
 ├── app/
 │   ├── Http/Controllers/
+│   │   ├── Admin/  🆕
+│   │   │   ├── AdminDashboardController.php
+│   │   │   ├── AdminClassController.php
+│   │   │   ├── AdminMembershipController.php
+│   │   │   └── AdminScheduleController.php  🆕
 │   │   ├── AuthController.php
 │   │   ├── StudioClassController.php
 │   │   ├── EnrollmentController.php
 │   │   ├── DashboardController.php
 │   │   ├── ContactController.php
-│   │   └── MembershipController.php
+│   │   ├── MembershipController.php
+│   │   └── PaymentController.php
+│   ├── Middleware/
+│   │   └── AdminMiddleware.php  🆕
 │   ├── Models/
 │   │   ├── User.php
 │   │   ├── StudioClass.php
@@ -375,10 +454,20 @@ flexora-laravel/
 ├── database/
 │   ├── migrations/
 │   └── seeders/
+│       ├── AdminUserSeeder.php  🆕
+│       └── ... other seeders
 ├── resources/
 │   ├── views/
+│   │   ├── admin/  🆕
+│   │   │   ├── dashboard/
+│   │   │   ├── classes/
+│   │   │   ├── memberships/
+│   │   │   └── schedules/  🆕
 │   │   ├── layouts/
-│   │   ├── components/
+│   │   │   ├── app.blade.php
+│   │   │   └── admin.blade.php  🆕
+│   │   ├── vendor/
+│   │   │   └── pagination/  🆕
 │   │   ├── dashboard.blade.php
 │   │   ├── contact.blade.php
 │   │   └── ... other views
@@ -387,6 +476,10 @@ flexora-laravel/
 ├── routes/
 │   ├── api.php
 │   └── web.php
+├── storage/
+│   └── app/
+│       └── public/
+│           └── classes/  🆕
 └── public/
     ├── images/
     └── storage/
@@ -438,8 +531,16 @@ Untuk pertanyaan atau support:
 
 ---
 
-**Version**: 1.0.0  
-**Last Updated**: November 2025
+**Version**: 1.2.0  
+**Last Updated**: December 2025
+
+**Recent Updates**:
+
+-   ✅ Admin Panel dengan CRUD lengkap
+-   ✅ Schedule Management System
+-   ✅ Image Storage Migration
+-   ✅ Custom Pagination Design
+-   ✅ Role-based Access Control
 
 In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
 
