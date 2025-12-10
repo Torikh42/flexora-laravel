@@ -60,9 +60,11 @@ Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminClassController;
 use App\Http\Controllers\Admin\AdminMembershipController;
+use App\Http\Controllers\Admin\AdminScheduleController;
 
 Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::resource('classes', AdminClassController::class);
     Route::resource('memberships', AdminMembershipController::class);
+    Route::resource('schedules', AdminScheduleController::class);
 });

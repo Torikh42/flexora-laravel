@@ -17,6 +17,11 @@ class Schedule extends Model
         'price',
     ];
 
+    protected $casts = [
+        'start_time' => 'datetime',
+        'end_time' => 'datetime',
+    ];
+
     public function studioClass()
     {
         return $this->belongsTo(StudioClass::class, 'studio_class_id');
