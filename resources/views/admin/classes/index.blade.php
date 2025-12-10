@@ -59,7 +59,9 @@
     </table>
 </div>
 
-<div class="mt-6">
-    {{ $classes->links() }}
+<div class="mt-6 flex justify-center">
+    <div class="bg-white px-4 py-3 rounded-lg shadow">
+        {{ $classes->links() }}
+    </div>
 </div>
 @endsection

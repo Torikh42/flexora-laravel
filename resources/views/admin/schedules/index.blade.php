@@ -60,7 +60,9 @@
     </table>
 </div>
 
-<div class="mt-6">
-    {{ $schedules->links() }}
+<div class="mt-6 flex justify-center">
+    <div class="bg-white px-4 py-3 rounded-lg shadow">
+        {{ $schedules->links() }}
+    </div>
 </div>
 @endsection
