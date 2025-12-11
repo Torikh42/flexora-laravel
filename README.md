@@ -487,6 +487,58 @@ flexora-laravel/
 
 ---
 
+## 📦 Panduan Instalasi untuk Pengumpulan Project
+
+> **Untuk Dosen/Reviewer**: Jika Anda ingin menjalankan proyek ini di komputer Anda, silakan ikuti panduan berikut:
+
+### 📖 Dokumentasi Instalasi
+
+1. **[INSTALASI.md](./INSTALASI.md)** - Panduan lengkap step-by-step dengan penjelasan detail
+
+    - Requirements (software yang dibutuhkan)
+    - Langkah instalasi dari awal
+    - Konfigurasi environment
+    - Troubleshooting lengkap
+
+2. **[DEPLOY_CHECKLIST.md](./DEPLOY_CHECKLIST.md)** - Quick checklist untuk deployment cepat
+    - Checklist prerequisites
+    - Langkah cepat (15 menit)
+    - Verifikasi instalasi
+
+### ⚡ Quick Start
+
+```bash
+# 1. Install: XAMPP, Composer, Node.js
+# 2. Buat database: flexora_laravel
+# 3. Extract project dan jalankan:
+
+composer install
+npm install
+copy .env.example .env
+php artisan key:generate
+php artisan jwt:secret
+php artisan migrate --seed
+php artisan storage:link
+npm run build
+php artisan serve
+```
+
+**Admin Access**:
+
+-   URL: `http://localhost:8000/admin/dashboard`
+-   Email: `admin@flexora.com`
+-   Password: `password`
+
+### 📋 Yang Dibutuhkan
+
+-   **XAMPP** (PHP 8.2+, MySQL 8.0) - [Download](https://www.apachefriends.org/)
+-   **Composer** - [Download](https://getcomposer.org/)
+-   **Node.js** (v18+) - [Download](https://nodejs.org/)
+
+**Estimasi waktu setup**: 15-20 menit
+
+---
+
 ## 🚀 Deployment
 
 ### Production Checklist
