@@ -32,7 +32,7 @@ Pastikan software berikut sudah terinstall:
 ```
 1. Buka: http://localhost/phpmyadmin
 2. Klik "Databases"
-3. Database name: flexora_laravel
+3. Database name: flexora
 4. Collation: utf8mb4_unicode_ci
 5. Klik "Create"
 ```

@@ -509,7 +509,7 @@ flexora-laravel/
 
 ```bash
 # 1. Install: XAMPP, Composer, Node.js
-# 2. Buat database: flexora_laravel
+# 2. Buat database: flexora
 # 3. Extract project dan jalankan:
 
 composer install

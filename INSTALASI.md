@@ -49,7 +49,7 @@ Pastikan software berikut sudah terinstall:
 
 1. Buka browser, akses: `http://localhost/phpmyadmin`
 2. Klik **"Databases"**
-3. Database name: **`flexora_laravel`**
+3. Database name: **`flexora`**
 4. Collation: **`utf8mb4_unicode_ci`**
 5. Klik **"Create"**
 
@@ -123,7 +123,7 @@ php artisan serve --port=8080
 ## ✅ Checklist Instalasi
 
 -   [ ] XAMPP (Apache & MySQL) running
--   [ ] Database `flexora_laravel` sudah dibuat
+-   [ ] Database `flexora` sudah dibuat
 -   [ ] `composer install` berhasil
 -   [ ] `npm install` berhasil
 -   [ ] `php artisan migrate --seed` berhasil
