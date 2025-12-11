@@ -50,16 +50,9 @@ composer install
 npm install
 ```
 
-### 4️⃣ Setup Environment (2 menit)
+### 4️⃣ Setup Environment (1 menit)
 
 ```bash
-# Copy environment file
-copy .env.example .env
-
-# Generate keys
-php artisan key:generate
-php artisan jwt:secret
-
 # Setup database (isi dengan data dummy)
 php artisan migrate --seed
 
@@ -153,14 +146,14 @@ php artisan storage:link
 
 ## 📊 Estimasi Waktu
 
-| Tahap                | Waktu            |
-| -------------------- | ---------------- |
-| Extract & Persiapan  | 2 menit          |
-| Buat Database        | 1 menit          |
-| Install Dependencies | 5-10 menit       |
-| Setup Environment    | 2 menit          |
-| Jalankan Aplikasi    | 1 menit          |
-| **TOTAL**            | **~15-20 menit** |
+| Tahap                   | Waktu            |
+| ----------------------- | ---------------- |
+| Extract & Persiapan     | 2 menit          |
+| Buat Database           | 1 menit          |
+| Install Dependencies    | 5-10 menit       |
+| Setup Database & Assets | 1 menit          |
+| Jalankan Aplikasi       | 1 menit          |
+| **TOTAL**               | **~10-15 menit** |
 
 ---
 

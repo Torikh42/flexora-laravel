@@ -514,9 +514,6 @@ flexora-laravel/
 
 composer install
 npm install
-copy .env.example .env
-php artisan key:generate
-php artisan jwt:secret
 php artisan migrate --seed
 php artisan storage:link
 npm run build
@@ -535,7 +532,7 @@ php artisan serve
 -   **Composer** - [Download](https://getcomposer.org/)
 -   **Node.js** (v18+) - [Download](https://nodejs.org/)
 
-**Estimasi waktu setup**: 15-20 menit
+**Estimasi waktu setup**: 10-15 menit
 
 ---
 

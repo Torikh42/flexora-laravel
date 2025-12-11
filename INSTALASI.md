@@ -53,7 +53,7 @@ Pastikan software berikut sudah terinstall:
 4. Collation: **`utf8mb4_unicode_ci`**
 5. Klik **"Create"**
 
-### 4. Install Dependencies
+### 4. Install Dependencies & Setup
 
 Buka **Command Prompt** di folder project:
 
@@ -64,29 +64,14 @@ cd D:\flexora-laravel
 # Install dependencies
 composer install
 npm install
-```
 
-> Proses ini butuh koneksi internet, waktu: ~5-10 menit
-
-### 5. Setup Environment
-
-```bash
-# Copy file environment
-copy .env.example .env
-
-# Generate keys
-php artisan key:generate
-php artisan jwt:secret
-
-# Setup database
+# Setup database & build assets
 php artisan migrate --seed
-
-# Create storage link
 php artisan storage:link
-
-# Build assets
 npm run build
 ```
+
+> Proses install butuh koneksi internet, waktu: ~5-10 menit
 
 ---
 
@@ -133,12 +118,6 @@ php artisan serve --port=8080
 # Akses: http://localhost:8080
 ```
 
-### JWT Secret Error
-
-```bash
-php artisan jwt:secret --force
-```
-
 ---
 
 ## ✅ Checklist Instalasi
@@ -147,7 +126,6 @@ php artisan jwt:secret --force
 -   [ ] Database `flexora_laravel` sudah dibuat
 -   [ ] `composer install` berhasil
 -   [ ] `npm install` berhasil
--   [ ] `.env` sudah dikonfigurasi
 -   [ ] `php artisan migrate --seed` berhasil
 -   [ ] `php artisan serve` running
 -   [ ] Browser bisa akses `http://localhost:8000`
@@ -155,4 +133,4 @@ php artisan jwt:secret --force
 
 ---
 
-**Estimasi Waktu Total: 15-20 menit**
+**Estimasi Waktu Total: 10-15 menit**
